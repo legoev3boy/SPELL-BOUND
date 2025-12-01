@@ -1,0 +1,5 @@
+{
+  "name": "SpellBound",
+  "description": "An interactive spelling practice app powered by Gemini. Select your grade, listen to the sentence, and type what you hear to improve your spelling skills.",
+  "requestFramePermissions": []
+}
