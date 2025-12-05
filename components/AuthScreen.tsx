@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User } from '../types';
 import { loginUser, registerUser, checkUsernameExists } from '../services/storage';
-import { Wand2, ArrowRight, UserPlus, LogIn, CheckCircle2, XCircle } from 'lucide-react';
+import { Wand2, ArrowRight, UserPlus, Mail, CheckCircle2, XCircle } from 'lucide-react';
 
 interface AuthScreenProps {
   onLoginSuccess: (username: string) => void;
@@ -10,7 +10,7 @@ interface AuthScreenProps {
 const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   
   // Availability state: null = not checking/empty, true = available, false = taken
@@ -35,8 +35,14 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
     e.preventDefault();
     setError(null);
 
-    if (!username.trim() || !password.trim()) {
+    if (!username.trim() || !email.trim()) {
       setError("Please fill in all fields");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      setError("Please enter a valid email address");
       return;
     }
 
@@ -46,7 +52,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
       return;
     }
 
-    const user: User = { username: username.trim(), password: password.trim() };
+    const user: User = { username: username.trim(), email: email.trim() };
 
     if (isLogin) {
       const result = loginUser(user);
@@ -112,19 +118,24 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
             )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1 ml-1">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
-              placeholder="••••••••"
-            />
+          <div className="pt-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1 ml-1">Email Address</label>
+            <div className="relative">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full pl-4 pr-10 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all"
+                placeholder="you@example.com"
+              />
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <Mail size={20} />
+              </div>
+            </div>
           </div>
 
           {error && (
-            <div className="p-3 bg-red-50 text-red-600 text-sm rounded-xl text-center font-medium animate-pulse">
+            <div className="p-3 bg-red-50 text-red-600 text-sm rounded-xl text-center font-medium animate-pulse mt-4">
               {error}
             </div>
           )}
@@ -132,7 +143,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
           <button
             type="submit"
             disabled={!isLogin && isAvailable === false}
-            className={`w-full py-4 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 mt-2
+            className={`w-full py-4 rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 mt-6
               ${!isLogin && isAvailable === false 
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
                 : 'bg-primary hover:bg-primary/90 text-white shadow-primary/30'}
@@ -152,7 +163,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLoginSuccess }) => {
               setIsLogin(!isLogin);
               setError(null);
               setUsername('');
-              setPassword('');
+              setEmail('');
               setIsAvailable(null);
             }}
             className="text-gray-500 hover:text-primary font-medium text-sm transition-colors flex items-center justify-center gap-1 mx-auto"

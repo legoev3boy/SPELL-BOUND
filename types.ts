@@ -49,7 +49,5 @@ export interface PracticeSessionRecord {
 
 export interface User {
   username: string;
-  // In a real app, never store plain passwords. 
-  // For this client-side demo, we store it to simulate auth.
-  password: string; 
+  email: string;
 }

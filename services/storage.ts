@@ -36,9 +36,14 @@ export const loginUser = (user: User): { success: boolean; message: string } => 
   const users = getUsers();
   const storedUser = users[user.username];
   
-  if (!storedUser || storedUser.password !== user.password) {
-    return { success: false, message: 'Invalid username or password' };
+  if (!storedUser) {
+    return { success: false, message: 'Username not found' };
   }
+  
+  if (storedUser.email.toLowerCase() !== user.email.toLowerCase()) {
+    return { success: false, message: 'Invalid email for this user' };
+  }
+  
   return { success: true, message: 'Logged in' };
 };
 
